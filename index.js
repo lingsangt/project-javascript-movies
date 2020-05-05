@@ -14,6 +14,18 @@ const fetchData = async (searchTerm) => {
 
 };
 
+const root = document.querySelector ('.autocomplete');
+root.innerHTML =`
+    <label><b>Search For a Movie</b></label>
+    <input class="input" />
+    <div class="dropdown">
+        <div class="dropdown-menu">
+            <div class="dropdown-content results"></div>
+        </div>
+    </div>
+`;
+
+
 const input = document.querySelector ('input');
 
 const onInput =  async event => {
@@ -35,7 +47,7 @@ input.addEventListener ('input', debounce (onInput, 500));
 /*
 bulma.io/documentation/components/dropdown/
 
-2 options for making the autocomplete menu. 
+2 options for making the autocomplete menu. We go with option 2.
 In Option #1, the index.html code is more involved and matches the index.js well. 
 
 index.html
