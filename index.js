@@ -97,28 +97,7 @@ const movieTemplate = (movieDetail) => {
 
 
 /*
-Part 4:
-Refactor code from Part 3.
-
-Issues with Implementation from Part 3:
-The code touches everything, but autocomplete widget was supposed to be reusable.
-Autocomplete is not supposed to have knowledge of what a movie object is, no what to
-show for each option, nor what to do when a movie is clicked. Many global variables
-refer to specific elements, and it will be difficult to show a second autocomplete
-on the screen.
-
-
-We refactor to have the following format:
-
-In index.js
-Non-reusable code for the specific project. Config for Autocomplete:
-fetData()-function to find movies
-renderOption()-function that knows how to render a movie
-onOptionSelect()- function that gets invoked when user clicks an option
-root - element that the autocomplete should be rendered into
-
-autocomplete.js
-reusable code to get an autocomplete to work.
+Part 5: Show two columns for the two movie searches.
 
 */
 
