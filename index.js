@@ -51,7 +51,7 @@ const onInput = async event => {
         const option = document.createElement('a');
 
         //If no image is available, don't show anything
-        const imgSrc = movie.Poster === 'N/A' ? '': movie.Poster;
+        const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
 
         //Add item to dropdown
         option.classList.add('dropdown-item');
@@ -64,6 +64,8 @@ const onInput = async event => {
         option.addEventListener('click', () => {
             dropdown.classList.remove('is-active');
             input.value = movie.Title;
+
+            onMovieSelect(movie);
         });
 
         resultsWrapper.appendChild(option)
@@ -81,53 +83,42 @@ document.addEventListener('click', event => {
     };
 });
 
+const onMovieSelect = async movie => {
+    const response = await axios.get('http://www.omdbapi.com/', {
+        params: {
+            apikey: 'c7cc4d10',
+            i: movie.imdbID
+        }
+    });
+
+    document.querySelector('#summary').innerHTML=movieTemplate(response.data);
+};
+
+//helper function for onMovieSelect for displaying details on HTML after selection
+const movieTemplate = (movieDetail) => {
+    return `
+        <article class ="media">
+            <figure class="media-left">
+                <p class="image>
+                    <img src="${movieDetail.Poster}" />
+                </p>
+            </figure>
+            <div class="media-content">
+                <div class="content">
+                    <h1>${movieDetail.Title}</h1>
+                    <h4>${movieDetail.Genre}</h4>
+                    <p>${movieDetail.Plot}</p>
+                </div>
+            </div>
+        </article>
+    `;
+};
+
+
 /*
-User clicks an entry => Update text (to match what is clicked), close menu.
-
-User clicks outside the dropdown => close menu 
-
-bulma.io/documentation/components/dropdown/
-
-2 options for making the autocomplete menu. We go with option 2.
-In Option #1, the index.html code is more involved and matches the index.js well. 
-
-index.html
-<div class="dropdown">
-    <input />
-    
-    <div class="dropdown-menu">
-        <div class="dropdown-content">
-
-            <!-- Eventually pu toptions here --> 
-        
-        </div>
-    </div>
-</div>
-
-index.js
-Code to:
-1) select the autocomplete div
-2) Handle the input
-3) Do search
-4) Add in options to existing HTML
-
-
-
-In option #2, the index.html code is more simple, and there is less effort needed to 
-mach variable names between index.html and index.js.
-
-index.html
-<div class="autocomplete">
-</div>
-
-index.js
-Code to:
-1) select the autocomplete div
-2) Create input
-3) Handle the input
-4) Do search
-5) Add in html for menu
-6) Add in options to menu
+Part 3:
+get data and render data for movie selected. Make a new function noMovieSelect to handle
+this and add it to addEventListener when a user clicks on an item shown in the dropdown.
 
 
 */
