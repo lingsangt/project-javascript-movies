@@ -1,30 +1,39 @@
-const fetchData = async (searchTerm) => {
-    const response = await axios.get('http://www.omdbapi.com/', {
-        params: {
-            apikey: 'c7cc4d10',
-            s: searchTerm
-        }
-    });
 
-    if (response.data.Error) {
-        return [];
+
+
+createAutoComplete({
+    root: document.querySelector('.autocomplete'),
+    renderOption(movie) {
+        //If no image is available, don't show anything
+        const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+
+        return `
+        <img src="${imgSrc}"/>
+        ${movie.Title} (${movie.Year})
+        `
+    },
+    onOptionSelect(movie) {
+        onMovieSelect(movie);
+    },
+    inputValue(movie) {
+        return movie.Title;
+    },
+    async fetchData(searchTerm) {
+        const response = await axios.get('http://www.omdbapi.com/', {
+            params: {
+                apikey: 'c7cc4d10',
+                s: searchTerm
+            }
+        });
+
+        if (response.data.Error) {
+            return [];
+        }
+
+        return response.data.Search;
+
     }
 
-    return response.data.Search;
-
-};
-
-
-createAutoComplete ({
-    root: document.querySelector ('.autocomplete')
-});
-
-createAutoComplete ({
-    root: document.querySelector ('.autocomplete-two')
-});
-
-createAutoComplete ({
-    root: document.querySelector ('.autocomplete-three')
 });
 
 
@@ -37,7 +46,7 @@ const onMovieSelect = async movie => {
         }
     });
 
-    document.querySelector('#summary').innerHTML=movieTemplate(response.data);
+    document.querySelector('#summary').innerHTML = movieTemplate(response.data);
 };
 
 //helper function for onMovieSelect for displaying details on HTML after selection
@@ -89,12 +98,12 @@ const movieTemplate = (movieDetail) => {
 
 /*
 Part 4:
-Refactor code from Part 3. 
+Refactor code from Part 3.
 
-Issues with Implementation from Part 3: 
-The code touches everything, but autocomplete widget was supposed to be reusable. 
-Autocomplete is not supposed to have knowledge of what a movie object is, no what to 
-show for each option, nor what to do when a movie is clicked. Many global variables 
+Issues with Implementation from Part 3:
+The code touches everything, but autocomplete widget was supposed to be reusable.
+Autocomplete is not supposed to have knowledge of what a movie object is, no what to
+show for each option, nor what to do when a movie is clicked. Many global variables
 refer to specific elements, and it will be difficult to show a second autocomplete
 on the screen.
 
