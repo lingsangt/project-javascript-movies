@@ -7,7 +7,7 @@ const fetchData = async (searchTerm) => {
     });
 
     if (response.data.Error) {
-
+        return [];
     }
 
     return response.data.Search;
@@ -99,7 +99,7 @@ const movieTemplate = (movieDetail) => {
     return `
         <article class ="media">
             <figure class="media-left">
-                <p class="image>
+                <p class="image">
                     <img src="${movieDetail.Poster}" />
                 </p>
             </figure>
