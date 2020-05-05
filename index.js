@@ -9,7 +9,7 @@ const fetchData = async (searchTerm) => {
     if (response.data.Error){
 
     }
-    
+
     return response.data.Search;
 
 };
@@ -32,5 +32,7 @@ const onInput =  async event => {
 
 input.addEventListener ('input', debounce (onInput, 500));
 
-
+/*
+bulma.io/documentation/components/dropdown/
+*/
 
