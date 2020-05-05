@@ -15,73 +15,19 @@ const fetchData = async (searchTerm) => {
 };
 
 
-//Creates the autocomplete dropdown
-const root = document.querySelector('.autocomplete');
-root.innerHTML = `
-    <label><b>Search For a Movie</b></label>
-    <input class="input" />
-    <div class="dropdown">
-        <div class="dropdown-menu">
-            <div class="dropdown-content results"></div>
-        </div>
-    </div>
-`;
-
-
-const input = document.querySelector('input');
-const dropdown = document.querySelector('.dropdown');
-const resultsWrapper = document.querySelector('.results');
-
-const onInput = async event => {
-    const movies = await fetchData(event.target.value);
-
-    //For empty search, hide dropdown 
-    if (!movies.length) {
-        dropdown.classList.remove('is-active');
-        return;
-    }
-
-    //Clears dropdown from previous query
-    resultsWrapper.innerHTML = '';
-
-    //Shows dropdown 
-    dropdown.classList.add('is-active');
-
-    for (let movie of movies) {
-        const option = document.createElement('a');
-
-        //If no image is available, don't show anything
-        const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
-
-        //Add item to dropdown
-        option.classList.add('dropdown-item');
-        option.innerHTML = `
-        <img src="${imgSrc}"/>
-        ${movie.Title}
-        `;
-
-        //If a user clicks on an item shown in the dropdown
-        option.addEventListener('click', () => {
-            dropdown.classList.remove('is-active');
-            input.value = movie.Title;
-
-            onMovieSelect(movie);
-        });
-
-        resultsWrapper.appendChild(option)
-    }
-
-};
-
-//If user stops typing in search after 0.5 seconds, 'onInput' activates to show dropdown
-input.addEventListener('input', debounce(onInput, 500));
-
-//If user clicks outside of dropdown after search, hides the dropdown
-document.addEventListener('click', event => {
-    if (!root.contains(event.target)) {
-        dropdown.classList.remove('is-active');
-    };
+createAutoComplete ({
+    root: document.querySelector ('.autocomplete')
 });
+
+createAutoComplete ({
+    root: document.querySelector ('.autocomplete-two')
+});
+
+createAutoComplete ({
+    root: document.querySelector ('.autocomplete-three')
+});
+
+
 
 const onMovieSelect = async movie => {
     const response = await axios.get('http://www.omdbapi.com/', {
@@ -142,10 +88,28 @@ const movieTemplate = (movieDetail) => {
 
 
 /*
-Part 3:
-get data and render data for movie selected. Make a new function noMovieSelect to handle
-this and add it to addEventListener when a user clicks on an item shown in the dropdown.
+Part 4:
+Refactor code from Part 3. 
 
+Issues with Implementation from Part 3: 
+The code touches everything, but autocomplete widget was supposed to be reusable. 
+Autocomplete is not supposed to have knowledge of what a movie object is, no what to 
+show for each option, nor what to do when a movie is clicked. Many global variables 
+refer to specific elements, and it will be difficult to show a second autocomplete
+on the screen.
+
+
+We refactor to have the following format:
+
+In index.js
+Non-reusable code for the specific project. Config for Autocomplete:
+fetData()-function to find movies
+renderOption()-function that knows how to render a movie
+onOptionSelect()- function that gets invoked when user clicks an option
+root - element that the autocomplete should be rendered into
+
+autocomplete.js
+reusable code to get an autocomplete to work.
 
 */
 
