@@ -14,6 +14,8 @@ const fetchData = async (searchTerm) => {
 
 };
 
+
+//Creates the autocomplete dropdown
 const root = document.querySelector ('.autocomplete');
 root.innerHTML =`
     <label><b>Search For a Movie</b></label>
@@ -27,22 +29,51 @@ root.innerHTML =`
 
 
 const input = document.querySelector ('input');
+const dropdown = document.querySelector ('.dropdown');
+const resultsWrapper = document.querySelector ('.results');
 
 const onInput =  async event => {
     const movies = await fetchData (event.target.value);
+
+    //For empty search, hide dropdown 
+    if (!movies.length){
+        dropdown.classList.remove ('is-active');
+        return;
+    }
+
+    //Clears dropdown from previous query
+    resultsWrapper.innerHTML='';
+
+    //Shows dropdown 
+    dropdown.classList.add('is-active');
+
     for (let movie of movies){
-        const div = document.createElement ('div');
-        div.innerHTML =`
-        <img src="${movie.Poster}"/>
-        <h1>${movie.Title}</h1>
+        const option = document.createElement ('a');
+
+        //If no image is available, don't show anything
+        const imgSrc = movie.Poster ==='N/A'?''movie.Poster;
+
+        //Add item to dropdown
+        option.classList.add ('dropdown-item');
+        option.innerHTML =`
+        <img src="${imgSrc}"/>
+        ${movie.Title}
         `;
 
-        document.querySelector ('#target').appendChild (div)
+        resultsWrapper.appendChild (option)
     }
     
 };
 
+//If user stops typing in search after 0.5 seconds, 'onInput' activates to show dropdown
 input.addEventListener ('input', debounce (onInput, 500));
+
+//If user clicks outside of dropdown after search, hides the dropdown
+document.addEventListener ('click', event => {
+    if (!root.contains (event.target)){
+        dropdown.classList.remove ('is-active');
+    };
+});
 
 /*
 bulma.io/documentation/components/dropdown/
